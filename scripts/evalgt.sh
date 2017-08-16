@@ -6,8 +6,8 @@
 
 # [<outpfile>=eval.res]
 USAGE="Usage:  $0 <evalapp> [OPTS...] <execnum> <inpdirs...>
-  Executes specified evaluation app <execnum> times with the options OPTS on each \
-file in each <inpdir> directory, evaluating relative the <inpdir>_gt.cnl grouund-truth.
+  Execute specified evaluation app <execnum> times with the options OPTS on each .cnl \
+file in each <inpdir> directory, evaluating against the <inpdir>_gt.cnl ground-truth.
 
   Examples:
     ./eval.sh ./xmeasures -fp 1 museum 
