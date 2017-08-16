@@ -9,14 +9,14 @@ USAGE="Usage:  $0 <evalapp> [OPTS...] <execnum> <inpdirs...>
   Execute specified evaluation app <execnum> times with the options OPTS on each .cnl \
 file in each <inpdir> directory, evaluating against the <inpdir>_gt.cnl ground-truth.
 
-  Examples:
-    ./eval.sh ./xmeasures -fp 1 museum 
-    ./eval.sh ./gecmi -n 5 museum country
-
   evalapp  - evaluating app (xmeasures, gecmi)
   OPTS..  - options of the evaluating app
   execnum  - the number of executions
   inpdirs  - directories with .cnl files to be evaluated against the corresponding <inpdir>_gt.cnl grouund-truth files
+
+Examples:
+  ./eval.sh ./xmeasures -fp 1 museum 
+  ./eval.sh ./gecmi -n 5 museum country
 "
 # NOTE: this script should be started from the same folder as <evalapp>
 
@@ -25,8 +25,8 @@ EAPP=$1  # Evaluating app
 EOPTS=""  # Options of the eval app
 OUTPBASE="evals"
 #RESCONF=${OUTPBASE}.rcp  # Resource consumption file
-XNUM=1
-INPDIRS=""
+XNUM=1  # The number of executions
+INPDIRS=""  # Input dirs
 
 while [ $2 ]
 do
