@@ -28,6 +28,13 @@ OUTPBASE="evals"
 XNUM=1  # The number of executions
 INPDIRS=""  # Input dirs
 
+# Check for the input dir
+if [ -z $3 ]
+then
+	printf "Error: The input directory is not specified.\n\n$USAGE"
+	exit 1
+fi
+
 while [ $2 ]
 do
 	case $2 in
@@ -38,12 +45,6 @@ do
 	*)
 		XNUM=$2
 		shift
-		# Check for the input dir
-		if [ -z $2 ]
-		then
-			printf "Error: The input directory is not specified.\n$USAGE"
-			exit 1
-		fi
 		while [ $2 ]
 		do
 			# Parse remained arguments
@@ -60,7 +61,7 @@ do
 	esac
 done
 
-EAPPNAME=${EAPP##*/}
+EAPPNAME=${EAPP##*/}  # Remove base dir
 OUTPF=${OUTPBASE}_${EAPPNAME}`echo $EOPTS | tr -d ' '`.txt  # Results output file
 
 echo "Input parameters parsed, EAPP: $EAPP, XNUM: $XNUM, INPDIRS: $INPDIRS, EOPTS: $EOPTS"

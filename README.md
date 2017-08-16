@@ -14,6 +14,7 @@ Scripts and accessory Java applications used for the type inference benchmarking
 
 - `evalgt.sh`  - executes the evaluation app ([xmeasures](https://github.com/eXascaleInfolab/xmeasures), [gecmi]((https://github.com/eXascaleInfolab/GenConvNMI)), etc) specified number of times with the specified options on each `*.cnl` file in each specified input directory, evaluating against the <inpdir>_gt.cnl ground-truth.
 - `shufrdfs.sh`  - shuffles and reduces input RDF dataset in N3 format to the specified ratio.
+- `execfile.sh`  - executes commands from the specified file tracing the resource consumption.
 
 ## Requirements
 
