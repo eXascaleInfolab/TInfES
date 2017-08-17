@@ -62,6 +62,17 @@ fi
 
 # Set default value if not specified to the base dir of the $DATASET
 OUTDIR=${OUTDIR:="${DATASET%/*}"}
+# Create the output directory if required
+if [ ! -d $OUTDIR ]
+then
+	mkdir -p $OUTDIR
+	if [ $? -ne 0 ]
+	then
+		echo "Error: output directory \"$OUTDIR\" creation failed: $?"
+		exit $?
+	fi
+fi
+
 OUTNAME="${DATASET##*/}"
 
 # The number of lines (triples) in the input dataset
