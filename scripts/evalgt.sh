@@ -29,7 +29,7 @@ XNUM=1  # The number of executions
 INPDIRS=""  # Input dirs
 
 # Check for the input dir
-if [ -z $3 ]
+if [ ! $3 ]
 then
 	printf "Error: The input directory is not specified.\n\n$USAGE"
 	exit 1

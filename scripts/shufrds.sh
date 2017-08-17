@@ -15,10 +15,9 @@ Shuffle the dataset and reduce it into the specified number of times outputting 
   Batch execution:
   $ find input/ -name "*.rdf" -exec ./shufrds.sh -o input/acsds_s0.25/ {} \;
 '
-DATASET=""
 OUTDIR=""  # Output directory
 
-while [ -n "$1" ]
+while [ $1 ]
 do
 	case $1 in
 	-h|--help)
@@ -31,9 +30,9 @@ do
 		shift  # Shift the arguments
 		;;
 	*)
-		if [ -z "$DATASET" ]
+		if [ ! $DATASET ]
 		then
-			DATASET=$1
+			DATASET=$1  # Input dataset
 		else
 			RDR=$1
 			# Verify $RDR value
@@ -55,11 +54,12 @@ do
 done
 
 # Verify that the input dataset is specified
-if [ -z "$DATASET" ]
+if [ ! $DATASET ]
 then
 	printf "Error: input dataset should be specified\n\n$USAGE"
 	exit 1
 fi
+
 # Set default value if not specified to the base dir of the $DATASET
 OUTDIR=${OUTDIR:="${DATASET%/*}"}
 OUTNAME="${DATASET##*/}"
