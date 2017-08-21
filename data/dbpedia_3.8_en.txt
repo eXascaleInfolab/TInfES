@@ -1,0 +1,21 @@
+DBPedia 3.8 en
+http://downloads.dbpedia.org/3.8/en/
+
+The following files are required (~4.5 Gb uncompressed):
+disambiguations_unredirected_en.ttl
+instance_types_en.ttl
+mappingbased_properties_en.ttl
+
+-----------------------------------------------------------
+
+SDType uses the following datasets:
+disambiguations_unredirected_en.ttl
+instance_types_en.ttl
+
+SDType uses as a ground-truth (in the original evaluations of the SDType on DBPedia) ans StaTIX optionally uses as the hinting dataset in the semi supervised mode:
+mappingbased_properties_en.ttl
+
+-----------------------------------------------------------
+
+SDType execution:
+$  java -jar SDTypeNew.jar <inpdataset.rdfn3> instance_types_en.ttl disambiguations_unredirected_en.ttl
