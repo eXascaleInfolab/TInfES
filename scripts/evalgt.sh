@@ -64,7 +64,7 @@ done
 EAPPNAME=${EAPP##*/}  # Remove base dir
 OUTPF=${OUTPBASE}_${EAPPNAME}`echo $EOPTS | tr -d ' '`.txt  # Results output file
 
-echo "Input parameters parsed, EAPP: $EAPP, XNUM: $XNUM, INPDIRS: $INPDIRS, EOPTS: $EOPTS"
+echo "Input parameters parsed, EAPP: $EAPP, XNUM: $XNUM, INPDIRS: $INPDIRS, EOPTS: $EOPTS; output file: $OUTPF"
 # Add datetime mark to the output files if they already exist
 #for FILE in "$OUTPF" "$RESCONF"
 #do
@@ -77,8 +77,16 @@ echo "Input parameters parsed, EAPP: $EAPP, XNUM: $XNUM, INPDIRS: $INPDIRS, EOPT
 # Evaluate files int from the input directory
 for INPDIR in $INPDIRS
 do
-	for INPFILE in `find "$INPDIR" -maxdepth 1 -type f -name "*.cnl"`
+	FOUND=0
+	for INPFILE in `find -L "$INPDIR" -maxdepth 1 -type f -name "*.cnl"`
 	do
+		FOUND=1
+		# Check existence of the GT file
+		if [ ! -r "$INPDIR"_gt.cnl ]
+		then
+			echo "WARNING, the ground-truth file \""$INPDIR"_gt.cnl\" does not exist, $INPDIR/ is omitted"
+			continue
+		fi
 		INPFNAME=${INPFILE##*/}
 		i=0
 		while [ $i -lt $XNUM ]
@@ -92,6 +100,11 @@ do
 			echo '' >> "$OUTPF"
 		fi
 	done
+	# Show warnings for the missed files/dirs
+	if [ $FOUND -eq 0 ]
+	then
+		echo "WARNING, there are no any *.cnl files found in the specified $INPDIR/"
+	fi
 done
 
 #EAPPNAME=${EAPP##*/}
