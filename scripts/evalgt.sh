@@ -64,7 +64,7 @@ done
 EAPPNAME=${EAPP##*/}  # Remove base dir
 OUTPF=${OUTPBASE}_${EAPPNAME}`echo $EOPTS | tr -d ' '`.txt  # Results output file
 
-echo "Input parameters parsed, EAPP: $EAPP, XNUM: $XNUM, INPDIRS: $INPDIRS, EOPTS: $EOPTS; output file: $OUTPF"
+echo "Input parameters parsed, EAPP: $EAPP, EOPTS: $EOPT, SXNUM: $XNUM, INPDIRS: $INPDIRS \nOutput file: $OUTPF"
 # Add datetime mark to the output files if they already exist
 #for FILE in "$OUTPF" "$RESCONF"
 #do
