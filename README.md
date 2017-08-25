@@ -1,7 +1,7 @@
 # TInfES
 Type Inference Evaluation Scripts &amp; Accessory Apps (used for the StaTIX benchmarking)
 
-\authors: (c) Soheil Roshankish, Artem Lutov <artem@exascale.info>  
+\authors: (c) Artem Lutov <artem@exascale.info>, Soheil Roshankish  
 \license:  [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)  
 \organization: [eXascale Infolab](http://exascale.info/)  
 \date: 2017-08
@@ -10,6 +10,7 @@ Type Inference Evaluation Scripts &amp; Accessory Apps (used for the StaTIX benc
 - [Overview](#overview)
 - [Requirements](#requirements)
 - [Usage](#usage)
+- [Related Projects](#related-projects)
 
 ## Overview
 
@@ -20,6 +21,8 @@ Scripts and accessory Java applications used for the type inference benchmarking
 - `evalgt.sh`  - executes the evaluation app ([xmeasures](https://github.com/eXascaleInfolab/xmeasures), [gecmi]((https://github.com/eXascaleInfolab/GenConvNMI)), etc) specified number of times with the specified options on each `*.cnl` file in each specified input directory, evaluating against the <inpdir>_gt.cnl ground-truth.
 - `shufrdfs.sh`  - shuffles and reduces input RDF dataset in N3 format to the specified ratio.
 - `execfile.sh`  - executes commands from the specified file tracing the resource consumption.
+- `mkevaldirs.sh`  - creates directories corresponding to the ground-truth files to put evaluating type inference results there.
+- `linkfiles.sh`  - links type inference (clustering) results of the algorithm(s) to the corresponding evaluating directories made by `mkevaldirs.sh`.
 
 ## Requirements
 
@@ -27,7 +30,7 @@ The scripts require any `POSIX` compatible execution environment (Linux or Unix)
 
 ## Usage
 
-To perform batch execution of the clustering algorithms copy / unpack the required algorithm to the dedicated directory `<algdir>` and link / copy there `scripts/evalgt.sh`, `scripts/<algname>.exs`, [exectime](https://bitbucket.org/lumais/exectime/). Update paths in the `<algname>.exs` if required.  
+To perform batch execution of the clustering algorithms copy / unpack the required algorithm to the dedicated directory `<algdir>` and link / copy there `scripts/execfile.sh`, `scripts/<algname>.exs`, [exectime](https://bitbucket.org/lumais/exectime/). Update paths in the `<algname>.exs` if required.  
 Run the batch execution: `./execfile.sh <algname>.exs`. It produces `evals_<algname>.rcp` containing execution time and memory consumption measurements in the current directory and resulting clusterings (type inference) according to the specified parameters in the `<algname>.exs`.
 
 To perform batch evaluation of the type inference accuracy, create a dedicated directory `<evals>/` and link / copy there `scripts/evalgt.sh`, `scripts/linkfiles.sh`, `scripts/mkevaldirs.sh`, [xmeasures](https://github.com/eXascaleInfolab/xmeasures), [gecmi](https://github.com/eXascaleInfolab/GenConvNMI) and ground-truth files from the `data/<datasets>_gt` (or produce them). The ground-truth files contain for each #type property space separated subject ids, sequentially enumerated from 0. Run `./mkevaldirs.sh` to create directories that will hold type inference results to be evaluated against the respective ground-truth files. Then run `linkfiles.sh <results_dir>` to link algorithm(s) results to the corresponding directories to be evaluated. And finally run the batch evaluations using `evalgt.sh` script. See `evalgt.sh -h` for details. It produces the required evaluations (`eval_<evalapp-params>.txt` files) in the current directory, which are the accuracy results of the type inference.
