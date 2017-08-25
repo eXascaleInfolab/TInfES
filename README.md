@@ -25,6 +25,13 @@ Scripts and accessory Java applications used for the type inference benchmarking
 
 The scripts require any `POSIX` compatible execution environment (Linux or Unix). Java apps were tested on Java 1.8+.
 
+## Usage
+
+To perform batch execution of the clustering algorithms copy / unpack the required algorithm to the dedicated directory `<algdir>` and link / copy there `scripts/evalgt.sh`, `scripts/<algname>.exs`, [exectime](https://bitbucket.org/lumais/exectime/). Update paths in the `<algname>.exs` if required.  
+Run the batch execution: `./execfile.sh <algname>.exs`. It produces `evals_<algname>.rcp` containing execution time and memory consumption measurements in the current directory and resulting clusterings (type inference) according to the specified parameters in the `<algname>.exs`.
+
+To perform batch evaluation of the type inference accuracy, create a dedicated directory `<evals>/` and link / copy there `scripts/evalgt.sh`, `scripts/linkfiles.sh`, `scripts/mkevaldirs.sh`, [xmeasures](https://github.com/eXascaleInfolab/xmeasures), [gecmi](https://github.com/eXascaleInfolab/GenConvNMI) and ground-truth files from the `data/<datasets>_gt` (or produce them). The ground-truth files contain for each #type property space separated subject ids, sequentially enumerated from 0. Run `./mkevaldirs.sh` to create directories that will hold type inference results to be evaluated against the respective ground-truth files. Then run `linkfiles.sh <results_dir>` to link algorithm(s) results to the corresponding directories to be evaluated. And finally run the batch evaluations using `evalgt.sh` script. See `evalgt.sh -h` for details. It produces the required evaluations (`eval_<evalapp-params>.txt` files) in the current directory, which are the accuracy results of the type inference.
+
 ## Related Projects
 
 - [StaTIX](https://github.com/eXascaleInfolab/StaTIX)  - Statistical Type Inference (both fully automatic and semi supervised) for RDF datasets in N3 format.
