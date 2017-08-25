@@ -77,16 +77,8 @@ echo "Input parameters parsed, EAPP: $EAPP, EOPTS: $EOPT, SXNUM: $XNUM, INPDIRS:
 # Evaluate files int from the input directory
 for INPDIR in $INPDIRS
 do
-	FOUND=0
-	for INPFILE in `find -L "$INPDIR" -maxdepth 1 -type f -name "*.cnl"`
+	for INPFILE in `find "$INPDIR" -maxdepth 1 -type f -name "*.cnl"`
 	do
-		FOUND=1
-		# Check existence of the GT file
-		if [ ! -r "$INPDIR"_gt.cnl ]
-		then
-			echo "WARNING, the ground-truth file \""$INPDIR"_gt.cnl\" does not exist, $INPDIR/ is omitted"
-			continue
-		fi
 		INPFNAME=${INPFILE##*/}
 		i=0
 		while [ $i -lt $XNUM ]
@@ -100,11 +92,6 @@ do
 			echo '' >> "$OUTPF"
 		fi
 	done
-	# Show warnings for the missed files/dirs
-	if [ $FOUND -eq 0 ]
-	then
-		echo "WARNING, there are no any *.cnl files found in the specified $INPDIR/"
-	fi
 done
 
 #EAPPNAME=${EAPP##*/}
