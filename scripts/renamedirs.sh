@@ -11,7 +11,7 @@ then
 	exit 1
 fi
 
-if [$2]
+if [ $2 ]
 then
 	INPSUF="$1"
 	OUTSUF="$2"
