@@ -91,6 +91,8 @@ do
 		i=0
 		while [ $i -lt $XNUM ]
 		do
+			# Show executing command, which is convenient for the logging
+			echo "$EAPP" $EOPTS "$INPFILE" "$INPDIR"_gt.cnl "| tail -n 1 |" sed "s/\(.*\)/$INPFNAME"'\\t \\1/'
 			"$EAPP" $EOPTS "$INPFILE" "$INPDIR"_gt.cnl | tail -n 1 | sed "s/\(.*\)/$INPFNAME\t \1/" >> "$OUTPF"
 			i=$((i+1))
 		done
