@@ -1,7 +1,7 @@
 # TInfES
 Type Inference Evaluation Scripts &amp; Accessory Apps (used for the StaTIX benchmarking)
 
-\authors: (c) Artem Lutov <artem@exascale.info>, Soheil Roshankish  
+\authors: (c) Soheil Roshankish, Artem Lutov <artem@exascale.info>  
 \license:  [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)  
 \organization: [eXascale Infolab](http://exascale.info/)  
 \date: 2017-08
