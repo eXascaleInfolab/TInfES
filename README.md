@@ -56,6 +56,8 @@ Lower is better.
 ![RAM](images/RAM_Algs.png)
 Lower is better.
 
+**Note:** Please, [star this project](//github.com/eXascaleInfolab/TInfES) if you use it.
+
 ## Related Projects
 
 - [StaTIX](https://github.com/eXascaleInfolab/StaTIX)  - Statistical Type Inference (both fully automatic and semi supervised) for RDF datasets in N3 format.
