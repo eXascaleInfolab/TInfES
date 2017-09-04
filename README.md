@@ -38,7 +38,7 @@ To perform batch evaluation of the type inference accuracy, create a dedicated d
 
 ## Benchmarking Results
 
-All the [benchmarking results](https://docs.google.com/spreadsheets/d/e/2PACX-1vShqU5Vs9GimVV5OXoZ50uFNwhGfySwNZGYFufKo-lyq5-FMDAZ77yYLcFbo_iOGa2kDe5a1bI6TCFj/pubhtml?gid=2147007814&single=true)) are available online and some plots are listed below.
+All the [benchmarking results](https://docs.google.com/spreadsheets/d/e/2PACX-1vShqU5Vs9GimVV5OXoZ50uFNwhGfySwNZGYFufKo-lyq5-FMDAZ77yYLcFbo_iOGa2kDe5a1bI6TCFj/pubhtml?gid=2147007814&single=true)) are available online and some plots are listed below. [StaTIX](https://github.com/eXascaleInfolab/StaTIX) executed with `-m`, `-f` `-r m` parameters in non-supervised (StaTIX-mr) and semi-supervised (StaTIX-mr_s0.25) modes.
 
 ### Accuracy
 #### [Harmonic F1-Score](https://github.com/eXascaleInfolab/xmeasures)
