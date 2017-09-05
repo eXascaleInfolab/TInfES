@@ -47,7 +47,7 @@ Higher is better.
 #### [Overlapping NMI](https://github.com/eXascaleInfolab/OvpNMI)
 ![ONMI_max](images/ONMI_max_Algs.png)
 Higher is better.
-![ONMI_max](images/ONMI_max_StaTIX.png)
+![ONMI_max_StaTIX](images/ONMI_max_StaTIX.png)
 Higher is better.
 
 ### [Efficiency](https://bitbucket.org/lumais/exectime/)
