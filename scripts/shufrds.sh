@@ -76,7 +76,7 @@ fi
 OUTNAME="${DATASET##*/}"
 
 # The number of lines (triples) in the input dataset
-LINES=`wc -l "$DATASET" | sed -n 's|^\([0-9]*\).*|\1/2\n|p' | bc`
+LINES=`wc -l "$DATASET" | sed -n 's|^\([0-9]*\).*|\1/$RDR\n|p' | bc`
 # File suffix based on the reduction ratio
 FSUF=_s0`echo "scale=2; 1/$RDR" | bc`
 
