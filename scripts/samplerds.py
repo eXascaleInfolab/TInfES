@@ -153,7 +153,7 @@ def rawSampling(dataset, opts):
 	smes = random.sample([e for e in ents.values()], int(nents * (1 - opts.ratio)))
 	ents = None
 	# Output the sampled entites in the RDF N3/quad firmat
-	outfname = os.path.join(opts.outp_dir, dsname)
+	outfname = os.path.join(opts.outp_dir, ('_s' + str(opts.ratio)).join(os.path.splitext(dsname)))
 	with open(outfname, 'w') as foutp:
 		for ent in smes:
 			for atr in ent.attribs:
@@ -207,7 +207,7 @@ def sampleFile(dataset, opts):
 		#ent = Resource(gr, sb)  #URIRef(
 		#ent.graph.serialize(file, , format='n3')  # Serialize to the OPENED file!
 		gr.remove((sb, None, None))  # Remove all triples with the specified subject
-	outfname = os.path.join(opts.outp_dir, dsname)
+	outfname = os.path.join(opts.outp_dir, ('_s' + str(opts.ratio)).join(os.path.splitext(dsname)))
 	gr.serialize(outfname, format='nt')
 
 	print('The random sample of {:G} / {} entities ({:.2%}) are saved in RDF N3/quad format to: {}'
