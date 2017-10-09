@@ -117,7 +117,7 @@ def rawSampling(dataset, opts):
 				if not ln:
 					continue
 				subj, prop, obj = ln.split(' ', 2)
-				obj = obj.rstrip(' .')
+				obj = obj.rstrip('\n. ')
 				# Reuse objects for the strings
 				subj = res.setdefault(subj, subj)
 				obj = res.setdefault(obj, obj)
@@ -157,7 +157,7 @@ def rawSampling(dataset, opts):
 	with open(outfname, 'w') as foutp:
 		for ent in smes:
 			for atr in ent.attribs:
-				foutp.write(' '.join((ent.subj, atr[0], atr[1], '.')))
+				foutp.write(' '.join((ent.subj, atr[0], atr[1], '.\n')))
 	print('The random sample of {:G} / {} entities ({:.2%}) are saved in RDF N3/quad format to: {}'
 		.format(nents * opts.ratio, nents, opts.ratio, outfname))
 
