@@ -8,6 +8,7 @@
 \organizations: eXascale lab <http://exascale.info/>
 """
 from __future__ import print_function, division  # Required for stderr output, must be the first import
+from future.utils import viewvalues
 import argparse
 import os
 import sys
@@ -144,13 +145,13 @@ def rawSampling(dataset, opts):
 		opts.type_info = True
 	dsname = os.path.split(dataset)[1]
 	if opts.type_info:
-		ntyped = sum([e.typped for e in ents.values()])
+		ntyped = sum([e.typped for e in viewvalues(ents)])
 		nents = len(ents)
 		showTypeStat(ntyped, nents, dsname, opts.type_stat)
 
 	# Perform the sampling
 	random.seed(opts.seed)  # Note: None means use system time
-	smes = random.sample([e for e in ents.values()], int(nents * (1 - opts.ratio)))
+	smes = random.sample([e for e in viewvalues(ents)], int(nents * (1 - opts.ratio)))
 	ents = None
 	# Output the sampled entites in the RDF N3/quad firmat
 	outfname = os.path.join(opts.outp_dir, ('_s' + str(opts.ratio)).join(os.path.splitext(dsname)))
