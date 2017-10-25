@@ -8,7 +8,7 @@
 \organizations: eXascale lab <http://exascale.info/>
 """
 from __future__ import print_function, division  # Required for stderr output, must be the first import
-from future.utils import viewvalues
+from future.utils import viewvalues, viewitems
 import argparse
 import sys
 import glob
@@ -34,7 +34,7 @@ python3 {0} ./samplerds.py -c -r 0.5 -t typestats.txt biomedical/*.nq
 	# 	, help='Input RDF N-Tripple files specified by the wildcard or supporting rdf input file')
 	parser.add_argument('-t', '--type-file'  #, metavar='FILE_NAME'
 		, help='Resulting type file in RDF N-Tripple format to be converted into CNL format using suppotring RDF input file')
-	parser.add_argument('-o', '--output-dir'
+	parser.add_argument('-o', '--output-dir', dest='outp_dir'
 		, help='Output directory to store .imap or .cnl conversion results')
 	parser.add_argument('rdfname', metavar='RDF_FILENAME'  #, dest='bar'
 		, help='Input RDF N-Tripple files specified by the wildcard or supporting rdf input file for the type file')
@@ -42,22 +42,23 @@ python3 {0} ./samplerds.py -c -r 0.5 -t typestats.txt biomedical/*.nq
 	return parser.parse_args(args)
 
 
-def makeSubjIds(rdfname, mapfile):
-	"""Make subjects to ids mapping
+def makeSubjIds(rdfname, mapfile=None):
+	"""Map subjects to ids
 
 	rdfname  - input RDF N-Tripples file name
 	mapname  - output id mapping file object or None
 	return  - name: id mapping
 	"""
 	sbis = {}
-	assert mapfile is None or isinstance(mapfile, file), 'mapfile should a file object'
 	with open(rdfname) as frdf:
 		sid = 0  # Subject id
 		for ln in frdf:
 			# Consider comments as leading # and empty lines (at least the ending )
 			if not ln or ln[0] == '#':
 				continue
-			name = ln.split(1, ' ')[0]
+			if ln.startswith(' '):
+				raise ValueError('N-Tripple format is invalid: ' + ln)
+			name = ln.split(' ', 1)[0]
 			if sbis.setdefault(name, sid) == sid:
 				if mapfile:
 					mapfile.write('{}\t{}\n'.format(sid, name))
@@ -66,6 +67,10 @@ def makeSubjIds(rdfname, mapfile):
 
 
 def convert(opts):
+	"""Convert RDF to .imap or .cnl according to the specified options
+
+	opts  - converison options
+	"""
 	# Create output directories if they do not exist
 	if opts.outp_dir and not os.path.exists(opts.outp_dir):
 		os.makedirs(opts.outp_dir)
@@ -75,8 +80,8 @@ def convert(opts):
 		#rext = '.imap'  # Extension of the result
 		for fname in glob.iglob(opts.rdfname):
 			outpname = os.path.splitext(fname)[0] + '.imap'
-			if opts.output_dir:
-				outpname = os.path.join(opts.output_dir, os.path.split(outpname)[1])
+			if opts.outp_dir:
+				outpname = os.path.join(opts.outp_dir, os.path.split(outpname)[1])
 			with open(outpname, 'w') as fout:
 				print('Forming {} ...'.format(outpname))
 				makeSubjIds(fname, fout)
@@ -92,21 +97,21 @@ def convert(opts):
 			# Consider comments and empty lines (at least the ending one)
 			if not ln or ln.startswith('#'):
 				continue
-			subj, pred, obj = ln.split(2, ' ')
-			obj = obj.rtrim('. \t')
+			subj, pred, obj = ln.split(' ', 2)
+			obj = obj.rstrip('\n. \t')
 			if pred != tprop:
 				raise ValueError('Unexpected predicate (rdf:type is exptected): ' + ln)
 			mbs = cls.setdefault(obj, [])
-			mbs.append(sbis[obj])
+			mbs.append(sbis[subj])
 	# Output the fomred clusters
 	outpname = os.path.splitext(opts.type_file)[0] + '.cnl'
-	if opts.output_dir:
-		outpname = os.path.join(opts.output_dir, os.path.split(outpname)[1])
+	if opts.outp_dir:
+		outpname = os.path.join(opts.outp_dir, os.path.split(outpname)[1])
 	with open(outpname, 'w') as fout:
-		print('Forming {} ...'.format(outpname))
 		for mbs in viewvalues(cls):
 			fout.write(' '.join([str(mid) for mid in mbs]))
 			fout.write('\n')
+		print('Formed: {}'.format(outpname))
 
 
 if __name__ == '__main__':
