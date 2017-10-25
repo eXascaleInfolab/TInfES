@@ -20,10 +20,20 @@ Scripts and accessory Java applications used for the type inference benchmarking
 ### Scripts
 
 - `evalgt.sh`  - executes the evaluation app ([xmeasures](https://github.com/eXascaleInfolab/xmeasures), [gecmi]((https://github.com/eXascaleInfolab/GenConvNMI)), etc) specified number of times with the specified options on each `*.cnl` file in each specified input directory, evaluating against the <inpdir>_gt.cnl ground-truth.
-- `shufrdfs.sh`  - shuffles and reduces input RDF dataset in N3 format to the specified ratio.
+- `shufrdfs.sh`  - shuffles and reduces input RDF dataset in N-Tripple format to the specified ratio.
 - `execfile.sh`  - executes commands from the specified file tracing the resource consumption.
 - `mkevaldirs.sh`  - creates directories corresponding to the ground-truth files to put evaluating type inference results there.
 - `linkfiles.sh`  - links type inference (clustering) results of the algorithm(s) to the corresponding evaluating directories made by `mkevaldirs.sh`.
+- `samplerds.py`  - samples entities of the RDF N-Tripple reducing it to the specified ratio.
+- `rdfconvert.py`  - converts input RDF N-Tripple file to id map for the subjects or converts resulting types of SDA(Kenza) algorithm to the unified evaluating CNL format.
+
+### Algorithms
+
+- StaTIX
+- SDA (Semantic Data Aggregator). Kellou-Menouer and Zoubida Kedad. 2015. Schema Dis-
+covery in RDF Data Sources. In Conceptual Modeling, ER 2015, Stockholm. 481–495.
+- [SDType](https://github.com/HeikoPaulheim/sd-type-validate). Heiko Paulheim and Christian Bizer. 2013. Type inference on noisy
+rdf data. In International Semantic Web Conference. Springer, 510–525.
 
 ## Requirements
 
@@ -62,7 +72,7 @@ Lower is better.
 
 ## Related Projects
 
-- [StaTIX](https://github.com/eXascaleInfolab/StaTIX)  - Statistical Type Inference (both fully automatic and semi supervised) for RDF datasets in N3 format.
+- [StaTIX](https://github.com/eXascaleInfolab/StaTIX)  - Statistical Type Inference (both fully automatic and semi supervised) for RDF datasets in the N-Tripple format.
 - [xmeasures](https://github.com/eXascaleInfolab/xmeasures)  - Extrinsic clustering measures evaluation for the multi-resolution clustering with overlaps (covers): F1_gm for overlapping multi-resolution clusterings with possible unequal node base and standard NMI for non-overlapping clustering on a single resolution.
 - [OvpNMI](https://github.com/eXascaleInfolab/OvpNMI) - NMI evaluation method for the overlapping clusters (communities) that is not compatible with the standard NMI value unlike GenConvNMI, but it is much faster than GenConvNMI.
 - [GenConvNMI](https://github.com/eXascaleInfolab/GenConvNMI) - Overlapping NMI evaluation that is (unlike `onmi`) compatible with the original NMI and suitable for both overlapping and multi resolution (hierarchical) clusterings.
