@@ -36,7 +36,7 @@ python3 {0} ./samplerds.py -c -r 0.5 -t typestats.txt biomedical/*.nq
 		, help='Resulting type file in RDF N-Tripple format to be converted into CNL format using suppotring RDF input file')
 	parser.add_argument('-o', '--output-dir'
 		, help='Output directory to store .imap or .cnl conversion results')
-	parser.add_argument('rdfname', required=True, metavar='RDF-FILENAME'  #, dest='bar'
+	parser.add_argument('rdfname', metavar='RDF_FILENAME'  #, dest='bar'
 		, help='Input RDF N-Tripple files specified by the wildcard or supporting rdf input file for the type file')
 
 	return parser.parse_args(args)
