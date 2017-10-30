@@ -32,8 +32,8 @@ python3 {0} -t restypes/country.types -o rescnl ../country.rdf
 	parser.add_argument('-t', '--type-file'  #, metavar='FILE_NAME'
 		, help='Resulting type file in RDF N-Tripple format to be converted into CNL format using suppotring RDF input file')
 	parser.add_argument('-p', '--purify-types', action='store_true'  #, metavar='FILE_NAME'
-		, help='Omit resulting types that are not in the supporing RDF file on the CNL formation'
-			', otherwise warn about the existence of such added types')
+		, help='Omit resulting types that are not in the supporing RDF file on the CNL formation, otherwise the extra types are retained.'
+			' The subjects not present in the ground truth are always skipped with the warning.')
 	parser.add_argument('-o', '--output-dir', dest='outp_dir'
 		, help='Output directory to store .imap or .cnl conversion results')
 	parser.add_argument('rdfname', metavar='RDF_FILENAME'  #, dest='bar'
@@ -104,9 +104,9 @@ def convert(opts):
 	tprop = '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>'  # Type property
 	cls = {}  # Resulting classes of member ids in the format "type: ids"
 	with open(opts.type_file) as finp:
-		types = None if not opts.purify_types else set()
+		types = None if not opts.purify_types else set()  # Rentrieve types set only when explicily required
 		sbis, sidx = makeSubjIds(opts.rdfname, None, types)
-		xtypes = False  # Converting types contain subj ids that were not present or did not have types in the RDF dataset
+		treduced = False  # Converting types not present in the ground-truth were omitted
 		print('Loading types from {} using the base {} ...'.format(opts.type_file, opts.rdfname))
 		for ln in finp:
 			# Consider comments and empty lines (at least the ending one)
@@ -118,23 +118,23 @@ def convert(opts):
 				raise ValueError('Unexpected predicate (rdf:type is exptected): ' + ln)
 			# Omit extra types if required
 			if types and obj not in types:
-				xtypes = True
+				treduced = True
 				continue  # Omit
 			mbs = cls.setdefault(obj, [])
 			sid = sbis.get(subj)
 			if sid is None:
-				xtypes = True
-				if opts.purify_types:
-					# The subject does not have any types in the supporting RDF, but have the resulting type present in the supporting RDF
-					continue  # Omit
-				else:
-					sbis[subj] = sidx
-					sid = sidx
-					sidx += 1
+				# The subject does not have any types in the supporting RDF, but have the resulting type
+				continue  # Omit
+				# if opts.purify_types:
+				# 	# The subject does not have any types in the supporting RDF, but have the resulting type
+				# 	continue  # Omit
+				# else:
+				# 	sbis[subj] = sidx
+				# 	sid = sidx
+				# 	sidx += 1
 			mbs.append(sid)
-		if xtypes:
-			print('WARNING, converting types contained typed subjects that are not present in the supprting RDF dataset, '
-				+ ('the exta types are omitted' if opts.purify_types else 'included with new ids'), file=sys.stderr)
+		if treduced:
+			print('WARNING, the converting types not present in the ground-truth are omitted')
 
 	# Output the fomred clusters
 	outpname = os.path.splitext(opts.type_file)[0] + '.cnl'
@@ -142,9 +142,8 @@ def convert(opts):
 		outpname = os.path.join(opts.outp_dir, os.path.split(outpname)[1])
 	with open(outpname, 'w') as fout:
 		for mbs in viewvalues(cls):
-			# Note: empty members might be present in case of purification
+			# Note: empty members might be present if the resulting typed subjects are not present in the ground-truth
 			if not mbs:
-				assert opts.purify_types, 'Empty cluser members may exists only for the purified types'
 				continue
 			fout.write(' '.join([str(mid) for mid in mbs]))
 			fout.write('\n')
