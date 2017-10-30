@@ -25,9 +25,8 @@ def parseArgs(args=None):
 		' or resulting types to the .cnl clustering format.'
 		, formatter_class=argparse.RawDescriptionHelpFormatter
 		, epilog="""Examples:
-{0} -r 0.5 -t typestats.txt opengov/*.nt'
-python3 {0} ./samplerds.py -c -r 0.5 -t typestats.txt biomedical/*.nq
-{0} -c -r 0.25 -o biomedical/samples_s0.25/ -t types.info biomedical/lsr.nq biomedical/gen*.nq
+{0} -o ./cnl/ opengov/*.types'
+python3 {0} -t restypes/country.types -o rescnl ../country.rdf
 """
 		.format(sys.argv[0]))
 	# parser.add_argument('-r', '--rdf-file', required=True
