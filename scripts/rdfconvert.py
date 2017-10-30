@@ -8,7 +8,7 @@
 \organizations: eXascale lab <http://exascale.info/>
 """
 from __future__ import print_function, division  # Required for stderr output, must be the first import
-from future.utils import viewvalues, viewitems
+from future.utils import viewvalues  #, viewitems
 import argparse
 import sys
 import glob
@@ -29,10 +29,11 @@ def parseArgs(args=None):
 python3 {0} -t restypes/country.types -o rescnl ../country.rdf
 """
 		.format(sys.argv[0]))
-	# parser.add_argument('-r', '--rdf-file', required=True
-	# 	, help='Input RDF N-Tripple files specified by the wildcard or supporting rdf input file')
 	parser.add_argument('-t', '--type-file'  #, metavar='FILE_NAME'
 		, help='Resulting type file in RDF N-Tripple format to be converted into CNL format using suppotring RDF input file')
+	parser.add_argument('-p', '--purify-types', action='store_true'  #, metavar='FILE_NAME'
+		, help='Omit resulting types that are not in the supporing RDF file on the CNL formation'
+			', otherwise warn about the existence of such added types')
 	parser.add_argument('-o', '--output-dir', dest='outp_dir'
 		, help='Output directory to store .imap or .cnl conversion results')
 	parser.add_argument('rdfname', metavar='RDF_FILENAME'  #, dest='bar'
@@ -41,14 +42,19 @@ python3 {0} -t restypes/country.types -o rescnl ../country.rdf
 	return parser.parse_args(args)
 
 
-def makeSubjIds(rdfname, mapfile=None):
+def makeSubjIds(rdfname, mapfile=None, types=None):
 	"""Map subjects to ids
 
 	rdfname  - input RDF N-Tripples file name
 	mapname  - output id mapping file object or None
-	return  - name: id mapping
+	types  - set of accumulated types if not None
+	return
+		subjstp  - name: id mapping for the typed subjects
+		idend  - end of the original ids
 	"""
-	sbis = {}
+	tprop = '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>'  # Type property
+	subjstp = {}  # Typed subjects to be returned
+	sbis = {}  # Original subject ids
 	with open(rdfname) as frdf:
 		sid = 0  # Subject id
 		for ln in frdf:
@@ -57,12 +63,20 @@ def makeSubjIds(rdfname, mapfile=None):
 				continue
 			if ln.startswith(' '):
 				raise ValueError('N-Tripple format is invalid: ' + ln)
-			name = ln.split(' ', 1)[0]
+			name, pred, obj = ln.split(' ', 2)
+			# Update typped subjects
+			if pred == tprop:
+				subjstp[name] = sbis.get(name, sid)
+				if types is not None:
+					types.add(obj.rstrip('\n. \t'))
+			# Note: initially unique subjects should be added to retain original ids
 			if sbis.setdefault(name, sid) == sid:
 				if mapfile:
 					mapfile.write('{}\t{}\n'.format(sid, name))
 				sid += 1  # This item has just been added
-	return sbis
+	print('The number of typed subjects in {}: {} / {} ({:.2%})'.format(os.path.split(rdfname)[1]
+		, len(subjstp), sid, len(subjstp) / sid))
+	return subjstp, sid
 
 
 def convert(opts):
@@ -90,7 +104,9 @@ def convert(opts):
 	tprop = '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>'  # Type property
 	cls = {}  # Resulting classes of member ids in the format "type: ids"
 	with open(opts.type_file) as finp:
-		sbis = makeSubjIds(opts.rdfname)
+		types = None if not opts.purify_types else set()
+		sbis, sidx = makeSubjIds(opts.rdfname, None, types)
+		xtypes = False  # Converting types contain subj ids that were not present or did not have types in the RDF dataset
 		print('Loading types from {} using the base {} ...'.format(opts.type_file, opts.rdfname))
 		for ln in finp:
 			# Consider comments and empty lines (at least the ending one)
@@ -100,14 +116,36 @@ def convert(opts):
 			obj = obj.rstrip('\n. \t')
 			if pred != tprop:
 				raise ValueError('Unexpected predicate (rdf:type is exptected): ' + ln)
+			# Omit extra types if required
+			if types and obj not in types:
+				xtypes = True
+				continue  # Omit
 			mbs = cls.setdefault(obj, [])
-			mbs.append(sbis[subj])
+			sid = sbis.get(subj)
+			if sid is None:
+				xtypes = True
+				if opts.purify_types:
+					# The subject does not have any types in the supporting RDF, but have the resulting type present in the supporting RDF
+					continue  # Omit
+				else:
+					sbis[subj] = sidx
+					sid = sidx
+					sidx += 1
+			mbs.append(sid)
+		if xtypes:
+			print('WARNING, converting types contained typed subjects that are not present in the supprting RDF dataset, '
+				+ ('the exta types are omitted' if opts.purify_types else 'included with new ids'), file=sys.stderr)
+
 	# Output the fomred clusters
 	outpname = os.path.splitext(opts.type_file)[0] + '.cnl'
 	if opts.outp_dir:
 		outpname = os.path.join(opts.outp_dir, os.path.split(outpname)[1])
 	with open(outpname, 'w') as fout:
 		for mbs in viewvalues(cls):
+			# Note: empty members might be present in case of purification
+			if not mbs:
+				assert opts.purify_types, 'Empty cluser members may exists only for the purified types'
+				continue
 			fout.write(' '.join([str(mid) for mid in mbs]))
 			fout.write('\n')
 		print('Formed: {}'.format(outpname))
