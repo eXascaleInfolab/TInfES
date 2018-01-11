@@ -15,8 +15,8 @@ file in each <inpdir> directory, evaluating against the <inpdir>_gt.cnl ground-t
   inpdirs  - directories with .cnl files to be evaluated against the corresponding <inpdir>_gt.cnl grouund-truth files
 
 Examples:
-  ./eval.sh ./xmeasures -fp 1 museum 
-  ./eval.sh ./gecmi -n 5 museum country
+  ./$0 ./xmeasures -fp 1 museum 
+  ./$0 ./gecmi -n 5 museum country
 "
 # NOTE: this script should be started from the same folder as <evalapp>
 
