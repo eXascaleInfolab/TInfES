@@ -8,7 +8,7 @@
 \organizations: eXascale lab <http://exascale.info/>
 """
 from __future__ import print_function, division  # Required for stderr output, must be the first import
-from future.utils import viewvalues  #, viewitems
+from future.utils import viewitems  # viewvalues  #, viewitems
 import argparse
 import sys
 import glob
@@ -30,14 +30,14 @@ python3 {0} -t restypes/country.types -o rescnl ../country.rdf
 """
 		.format(sys.argv[0]))
 	parser.add_argument('-t', '--type-file'  #, metavar='FILE_NAME'
-		, help='Resulting type file in RDF N-Tripple format to be converted into CNL format using suppotring RDF input file')
+		, help='Types file in the RDF N-Tripple format to be converted to the CNL format')
 	parser.add_argument('-p', '--purify-types', action='store_true'  #, metavar='FILE_NAME'
 		, help='Omit resulting types that are not in the supporing RDF file on the CNL formation, otherwise the extra types are retained.'
 			' The subjects not present in the ground truth are always skipped with the warning.')
 	parser.add_argument('-o', '--output-dir', dest='outp_dir'
-		, help='Output directory to store .imap or .cnl conversion results')
+		, help='Output directory to store .imap or .cnl, .tmap conversion results')
 	parser.add_argument('rdfname', metavar='RDF_FILENAME'  #, dest='bar'
-		, help='Input RDF N-Tripple files specified by the wildcard or supporting rdf input file for the type file')
+		, help='Input RDF N-Tripple files specified by the wildcard or supporting (instances base) rdf input file for the type file')
 
 	return parser.parse_args(args)
 
@@ -47,10 +47,10 @@ def makeSubjIds(rdfname, mapfile=None, types=None):
 
 	rdfname  - input RDF N-Tripples file name
 	mapname  - output id mapping file object or None
-	types  - set of accumulated types if not None
+	types  - resulting set of the loaded types if not None
 	return
 		subjstp  - name: id mapping for the typed subjects
-		idend  - end of the original ids
+		idend  - end of the original (base) ids
 	"""
 	tprop = '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>'  # Type property
 	subjstp = {}  # Typed subjects to be returned
@@ -88,7 +88,8 @@ def convert(opts):
 	if opts.outp_dir and not os.path.exists(opts.outp_dir):
 		os.makedirs(opts.outp_dir)
 
-	# Perfoem wildcard resolution if the type file is not specified
+	# Perform wildcard resolution if the type file is not specified
+	# and output only the instance (subject) id mapping
 	if not opts.type_file:
 		#rext = '.imap'  # Extension of the result
 		for fname in glob.iglob(opts.rdfname):
@@ -97,14 +98,14 @@ def convert(opts):
 				outpname = os.path.join(opts.outp_dir, os.path.split(outpname)[1])
 			with open(outpname, 'w') as fout:
 				print('Forming {} ...'.format(outpname))
-				makeSubjIds(fname, fout)
+				makeSubjIds(fname, fout)  # Output subject ids to the fout
 		return
 
 	# Convert type result to the .cnl format
 	tprop = '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>'  # Type property
 	cls = {}  # Resulting classes of member ids in the format "type: ids"
 	with open(opts.type_file) as finp:
-		types = None if not opts.purify_types else set()  # Rentrieve types set only when explicily required
+		types = None if not opts.purify_types else set()  # Retrieve types set only when explicily required
 		sbis, sidx = makeSubjIds(opts.rdfname, None, types)
 		treduced = False  # Converting types not present in the ground-truth were omitted
 		print('Loading types from {} using the base {} ...'.format(opts.type_file, opts.rdfname))
@@ -138,16 +139,20 @@ def convert(opts):
 
 	# Output the fomred clusters
 	outpname = os.path.splitext(opts.type_file)[0] + '.cnl'
+	tpmap = os.path.splitext(opts.type_file)[0] + '.tmap'  # Resulting type map corresponding to the .CNL file
 	if opts.outp_dir:
 		outpname = os.path.join(opts.outp_dir, os.path.split(outpname)[1])
+		tpmap = os.path.join(opts.outp_dir, os.path.split(tpmap)[1])
 	with open(outpname, 'w') as fout:
-		for mbs in viewvalues(cls):
-			# Note: empty members might be present if the resulting typed subjects are not present in the ground-truth
-			if not mbs:
-				continue
-			fout.write(' '.join([str(mid) for mid in mbs]))
-			fout.write('\n')
-		print('Formed: {}'.format(outpname))
+		with open(tpmap, 'w') as ftmap:
+			for tp, mbs in viewitems(cls):
+				# Note: empty members might be present if the resulting typed subjects are not present in the ground-truth
+				if not mbs:
+					continue
+				fout.write(' '.join([str(mid) for mid in mbs]))
+				fout.write('\n')
+				ftmap.write(tp + '\n')
+			print('Formed: {}, {}'.format(outpname, tpmap))
 
 
 if __name__ == '__main__':
