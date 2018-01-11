@@ -35,7 +35,7 @@ python3 {0} -t restypes/country.types -o rescnl ../country.rdf
 		, help='Omit resulting types that are not in the supporing RDF file on the CNL formation, otherwise the extra types are retained.'
 			' The subjects not present in the ground truth are always skipped with the warning.')
 	parser.add_argument('-o', '--output-dir', dest='outp_dir'
-		, help='Output directory to store .imap or .cnl, .tmap conversion results')
+		, help='Output directory to store .idm (subject id map) or .cnl, .tlb (type label) conversion results')
 	parser.add_argument('rdfname', metavar='RDF_FILENAME'  #, dest='bar'
 		, help='Input RDF N-Tripple files specified by the wildcard or supporting (instances base) rdf input file for the type file')
 
@@ -80,7 +80,7 @@ def makeSubjIds(rdfname, mapfile=None, types=None):
 
 
 def convert(opts):
-	"""Convert RDF to .imap or .cnl according to the specified options
+	"""Convert RDF to .idm or .cnl according to the specified options
 
 	opts  - converison options
 	"""
@@ -91,9 +91,9 @@ def convert(opts):
 	# Perform wildcard resolution if the type file is not specified
 	# and output only the instance (subject) id mapping
 	if not opts.type_file:
-		#rext = '.imap'  # Extension of the result
+		#rext = '.idm'  # Extension of the result
 		for fname in glob.iglob(opts.rdfname):
-			outpname = os.path.splitext(fname)[0] + '.imap'
+			outpname = os.path.splitext(fname)[0] + '.idm'
 			if opts.outp_dir:
 				outpname = os.path.join(opts.outp_dir, os.path.split(outpname)[1])
 			with open(outpname, 'w') as fout:
@@ -139,20 +139,20 @@ def convert(opts):
 
 	# Output the fomred clusters
 	outpname = os.path.splitext(opts.type_file)[0] + '.cnl'
-	tpmap = os.path.splitext(opts.type_file)[0] + '.tmap'  # Resulting type map corresponding to the .CNL file
+	tplbs = os.path.splitext(opts.type_file)[0] + '.tlb'  # Resulting type map corresponding to the .CNL file
 	if opts.outp_dir:
 		outpname = os.path.join(opts.outp_dir, os.path.split(outpname)[1])
-		tpmap = os.path.join(opts.outp_dir, os.path.split(tpmap)[1])
+		tplbs = os.path.join(opts.outp_dir, os.path.split(tplbs)[1])
 	with open(outpname, 'w') as fout:
-		with open(tpmap, 'w') as ftmap:
+		with open(tplbs, 'w') as ftlbs:
 			for tp, mbs in viewitems(cls):
 				# Note: empty members might be present if the resulting typed subjects are not present in the ground-truth
 				if not mbs:
 					continue
 				fout.write(' '.join([str(mid) for mid in mbs]))
 				fout.write('\n')
-				ftmap.write(tp + '\n')
-			print('Formed: {}, {}'.format(outpname, tpmap))
+				ftlbs.write(tp + '\n')
+			print('Formed: {}, {}'.format(outpname, tplbs))
 
 
 if __name__ == '__main__':
