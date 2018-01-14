@@ -12,7 +12,8 @@ file in each <inpdir> directory, evaluating against the <inpdir>_gt.cnl ground-t
   evalapp  - evaluating app (xmeasures, gecmi)
   OPTS..  - options of the evaluating app
   execnum  - the number of executions
-  inpdirs  - directories with .cnl files to be evaluated against the corresponding <inpdir>_gt.cnl grouund-truth files
+  inpdirs  - directories with .cnl files (used as the second argument) to be evaluated \
+against the corresponding <inpdir>_gt.cnl grouund-truth files (used as the first argument)
 
 Examples:
   ./$0 ./xmeasures -fp 1 museum 
@@ -92,8 +93,8 @@ do
 		while [ $i -lt $XNUM ]
 		do
 			# Show executing command, which is convenient for the logging
-			echo "$EAPP" $EOPTS "$INPFILE" "$INPDIR"_gt.cnl "| tail -n 1 |" sed "s/\(.*\)/$INPFNAME"'\\t \\1/'
-			"$EAPP" $EOPTS "$INPFILE" "$INPDIR"_gt.cnl | tail -n 1 | sed "s/\(.*\)/$INPFNAME\t \1/" >> "$OUTPF"
+			echo "$EAPP" $EOPTS "$INPDIR"_gt.cnl "$INPFILE" "| tail -n 1 |" sed "s/\(.*\)/$INPFNAME"'\\t \\1/'
+			"$EAPP" $EOPTS "$INPDIR"_gt.cnl "$INPFILE" | tail -n 1 | sed "s/\(.*\)/$INPFNAME\t \1/" >> "$OUTPF"
 			i=$((i+1))
 		done
 		# Indent multiple executions
