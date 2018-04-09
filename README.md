@@ -1,10 +1,9 @@
 # TInfES
 Type Inference Evaluation Scripts &amp; Accessory Apps (used for the StaTIX benchmarking)
 
-\authors: (c) Soheil Roshankish, Artem Lutov <artem@exascale.info>  
+\authors: (c) Artem Lutov <artem@exascale.info>, [Soheil Roshankish](http://unibe-ch2.academia.edu/SoheilRoshankish/CurriculumVitae)
 \license:  [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)  
 \organization: [eXascale Infolab](http://exascale.info/)  
-\date: 2017-08
 
 ## Content
 - [Overview](#overview)
@@ -29,11 +28,9 @@ Scripts and accessory Java applications used for the type inference benchmarking
 
 ### Algorithms
 
-- StaTIX
-- SDA (Semantic Data Aggregator). Kellou-Menouer and Zoubida Kedad. 2015. Schema Dis-
-covery in RDF Data Sources. In Conceptual Modeling, ER 2015, Stockholm. 481–495.
-- [SDType](https://github.com/HeikoPaulheim/sd-type-validate). Heiko Paulheim and Christian Bizer. 2013. Type inference on noisy
-rdf data. In International Semantic Web Conference. Springer, 510–525.
+- [StaTIX](https://github.com/eXascaleInfolab/StaTIX)
+- [SDA (Semantic Data Aggregator)](https://link.springer.com/chapter/10.1007/978-3-319-25264-3_36). Kellou-Menouer and Zoubida Kedad. 2015. Schema Discovery in RDF Data Sources. In Conceptual Modeling, ER 2015, Stockholm. 481–495.
+- [SDType](https://github.com/HeikoPaulheim/sd-type-validate). Heiko Paulheim and Christian Bizer. 2013. Type inference on noisy rdf data. In International Semantic Web Conference. Springer, 510–525.
 
 ## Requirements
 
@@ -67,20 +64,37 @@ $ nohup ./evalgt.sh ./gecmi 3 museum soccerplayer country politician film mixen 
 
 ## Benchmarking Results
 
-All the [benchmarking results](https://docs.google.com/spreadsheets/d/e/2PACX-1vShqU5Vs9GimVV5OXoZ50uFNwhGfySwNZGYFufKo-lyq5-FMDAZ77yYLcFbo_iOGa2kDe5a1bI6TCFj/pubhtml?gid=2147007814&single=true)) are available online and some plots are listed below. [StaTIX](https://github.com/eXascaleInfolab/StaTIX) executed with `-m`, `-f` `-r m` parameters in non-supervised (StaTIX-mr) and semi-supervised (StaTIX-mr_s0.25) modes.
+[StaTIX](https://github.com/eXascaleInfolab/StaTIX) in the non-supervised mode with the following parameters:
+  - StaTIX: `-f` and the clustering library compiled *without the fast* clusters formation (AggHash);
+  - StaTIX-rm: `-f -r m` and the clustering library compiled *without the fast* clusters formation (AggHash);
+  - StaTIX-rm-m: `-f -r m -m` and the clustering library compiled *without the fast* clusters formation (AggHash);
+  - StaTIX-rm-m-f: `-f -r m -m` and the clustering library compiled with the **fast** clusters formation (AggHash).
 
 ### Accuracy
-#### [Harmonic F1-Score](https://github.com/eXascaleInfolab/xmeasures)
+#### [Harmonic F1-Score](https://github.com/eXascaleInfolab/xmeasures) (higher is better)
 ![F1h](images/F1h_Algs.png)
-Higher is better.
+
+#### [F1-Measures, Precision and Recall for the labeled types](https://github.com/eXascaleInfolab/xmeasures) (higher is better)
+\\ Algorithm | StaTIX | StaTIX-rm | | \StaTIX-rm-m[-f] | | | SDA | | |  SDType | |
+--- | :---: | :---: | --- | :---: | ---  | --- | :---: | --- | --- | :---: | --- |
+Dataset \\ | F1 | F1 | F1 | P | R | F1 | P | R | F1 | P | R
+museum       | 0.866  | 0.866  | 0.866  | 1.000 | 0.763 | 0.539 | 0.380 | 0.927 | 0.209 | 0.120 | 0.785
+soccerplayer | 0.789  | 0.789  | 0.789  | 1.000 | 0.652 | 0.695 | 0.574 | 0.882 | 0.447 | 0.339 | 0.657
+country      | 0.840  | 0.840  | 0.840  | 1.000 | 0.725 | 0.632 | 0.478 | 0.930 | 0.249 | 0.155 | 0.634
+politician   | 0.732  | 0.732  | **0.756** | 0.982 | 0.615 | 0.704 | 0.590 | 0.874 | 0.471 | 0.403 | 0.568
+film         | 1.000  | 1.000  | 1.000  | 1.000 | 1.000 | 0.839 | 0.722 | 1.000 | 0.435 | 0.278 | 1.000
+mixen        | 0.505  | **0.723**  | **0.751** | 0.869 | 0.662 | 0.559 | 0.412 | 0.873 | 0.378 | 0.360 | 0.398
+gendrgene    | 0.806  | 0.806  | 0.806  | 0.757 | 0.861 | 0.889 | 0.987 | 0.809 |       |       |      
+lsr          | 0.912  | **0.990**  | 0.990  | 1.000 | 0.981 | 0.998 | 0.996 | 0.999 |       |       |      
+bauhist      | 1.000  | 1.000  | 1.000  | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |       |       |      
+schools      | 1.000  | 1.000  | 1.000  | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |       |       |      
+histmunic    | 0.950  | 0.950  | **0.958** | 1.000 | 0.920 |       |       |       |       |       | 
 
 ### [Efficiency](https://bitbucket.org/lumais/exectime/)
-#### Execution Time
+#### Execution Time (lower is better)
 ![Execution Time](images/ETime_Algs.png)
-Lower is better.
-#### Memory Consumption (RAM)
+#### Memory Consumption (RAM) (lower is better)
 ![RAM](images/RAM_Algs.png)
-Lower is better.
 
 **Note:** Please, [star this project](//github.com/eXascaleInfolab/TInfES) if you use it.
 
